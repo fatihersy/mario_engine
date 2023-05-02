@@ -1,6 +1,10 @@
 package org.example.renderer;
 
+import org.joml.*;
+import org.lwjgl.BufferUtils;
+
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -15,6 +19,7 @@ public class Shader
     private final String fragment_path;
     private String vertex_source;
     private String fragment_source;
+    private boolean is_active = false;
 
     public Shader(String program_name, String vertex_path, String fragment_path)
     {
@@ -89,11 +94,77 @@ public class Shader
 
     public void use()
     {
-        glUseProgram(handle);
+        if (!is_active)
+        {
+            is_active = true;
+            glUseProgram(handle);
+        }
     }
 
     public void detach()
     {
+        is_active = false;
         glUseProgram(0);
+    }
+
+    public void upload_mat4f(String var_name, Matrix4f matrix)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        FloatBuffer mat_buffer = BufferUtils.createFloatBuffer(16);
+        matrix.get(mat_buffer);
+        glUniformMatrix4fv(var_location, false, mat_buffer);
+    }
+    public void upload_mat3f(String var_name, Matrix3f matrix)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        FloatBuffer mat_buffer = BufferUtils.createFloatBuffer(9);
+        matrix.get(mat_buffer);
+        glUniformMatrix3fv(var_location, false, mat_buffer);
+    }
+    public void upload_vec4f(String var_name, Vector4f vector)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform4f(var_location, vector.x,vector.y,vector.z,vector.w);
+    }
+    public void upload_vec3f(String var_name, Vector3f vector)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform3f(var_location, vector.x,vector.y,vector.z);
+    }
+    public void upload_vec2f(String var_name, Vector2f vector)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform2f(var_location, vector.x,vector.y);
+    }
+    public void upload_float(String var_name, float value)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform1f(var_location, value);
+    }
+    public void upload_integer(String var_name, int value)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform1i(var_location, value);
+    }
+    public void upload_texture(String var_name, int slot)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform1i(var_location, slot);
     }
 }

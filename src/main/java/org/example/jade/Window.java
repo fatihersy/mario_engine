@@ -27,19 +27,17 @@ public class Window {
     }
     public static void changeScene(int newScene) {
         switch (newScene) {
-            case 0: {
+            case 0 -> {
                 currentScene = new LevelEditorScene();
                 currentScene.init();
-                break;
             }
-            case 1: {
+            case 1 -> {
                 currentScene = new LevelScene();
                 currentScene.init();
-                break;
             }
-            default:
+            default -> {
                 assert false : "Unknown scene '" + newScene + "'";
-                break;
+            }
         }
     }
 
