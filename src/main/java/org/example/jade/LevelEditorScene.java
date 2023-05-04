@@ -1,5 +1,6 @@
 package org.example.jade;
 
+import org.example.components.SpriteRenderer;
 import org.example.renderer.Shader;
 import org.example.renderer.Texture;
 import org.joml.Vector2f;
@@ -19,6 +20,8 @@ public class LevelEditorScene extends Scene
     private int vaoID;
     private final Shader default_program;
     private Texture texture;
+
+    private boolean first_time = true;
 
     private final float[] vertexArray =
     {
@@ -49,8 +52,14 @@ public class LevelEditorScene extends Scene
     @Override
     public void init()
     {
+        System.out.println("Creating test object");
+        GameObject test_obj = new GameObject("test object");
+        test_obj.add_component(new SpriteRenderer());
+        this.add_game_object(test_obj);
+
+
         this.camera = new Camera(new Vector2f());
-        this.texture = new Texture("D:\\Documents\\OneDrive\\Pictures\\oc.png");
+        this.texture = new Texture("assets/Images/testImage.png");
 
         // ============================================
         //  Generate VAO, VBO, EBO and send -> GPU
@@ -85,7 +94,6 @@ public class LevelEditorScene extends Scene
 
         glVertexAttribPointer(2, uv_size, GL_FLOAT, false, vertex_size_bytes, (color_size + positions_size) * Float.BYTES);
         glEnableVertexAttribArray(2);
-
     }
 
     @Override
@@ -122,5 +130,16 @@ public class LevelEditorScene extends Scene
         glBindVertexArray(0);
 
         default_program.detach();
+
+        if (first_time) {
+            System.out.println("Creating 'test object 2'");
+            GameObject test_obj2 = new GameObject("test object 2");
+            test_obj2.add_component(new SpriteRenderer());
+            this.add_game_object(test_obj2);
+            first_time = false;
+        }
+
+        for (GameObject obj : this.game_objects)
+            obj.update(dt);
     }
 }

@@ -18,8 +18,8 @@ public class Window {
     public float r,g,b;
 
     private Window() {
-        this.width = 800;
-        this.height = 600;
+        this.width = 1920;
+        this.height = 1080;
         this.title ="Mario";
         r = 1.0f;
         g = 1.0f;
@@ -30,10 +30,12 @@ public class Window {
             case 0 -> {
                 currentScene = new LevelEditorScene();
                 currentScene.init();
+                currentScene.start();
             }
             case 1 -> {
                 currentScene = new LevelScene();
                 currentScene.init();
+                currentScene.start();
             }
             default -> {
                 assert false : "Unknown scene '" + newScene + "'";
