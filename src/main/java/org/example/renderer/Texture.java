@@ -10,12 +10,10 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture
 {
-    private int handle;
-    private String filepath;
+    private final int handle;
 
     public Texture(String filepath)
     {
-        this.filepath = filepath;
 
         handle = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, handle);

@@ -58,7 +58,7 @@ public class Shader
         if (success == GL_FALSE)
         {
             int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
-            System.out.println("ERROR:: '" + vertex_path + ".vert'\n\tVertex shader compilation failed");
+            System.out.println("ERROR:: '" + vertex_path + "'\n\tVertex shader compilation failed");
             System.out.println(glGetShaderInfoLog(vertexID, len));
             assert false : "";
         }
@@ -72,7 +72,7 @@ public class Shader
         if (success == GL_FALSE)
         {
             int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
-            System.out.println("ERROR:: '" + fragment_path + ".frag'\n\tFragment shader compilation failed");
+            System.out.println("ERROR:: '" + fragment_path + "'\n\tFragment shader compilation failed");
             System.out.println(glGetShaderInfoLog(fragmentID, len));
             assert false : "";
         }
@@ -166,5 +166,13 @@ public class Shader
 
         int var_location = glGetUniformLocation(handle, var_name);
         glUniform1i(var_location, slot);
+    }
+
+    public void upload_integer_array(String var_name, int[] value)
+    {
+        use();
+
+        int var_location = glGetUniformLocation(handle, var_name);
+        glUniform1iv(var_location, value);
     }
 }

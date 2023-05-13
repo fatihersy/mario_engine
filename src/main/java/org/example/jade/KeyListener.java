@@ -6,7 +6,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 public class KeyListener
 {
     private static KeyListener instance;
-    private final boolean[] keyPressed = new boolean[350];
+    private final boolean[] key_pressed = new boolean[350];
 
     private KeyListener() {
 
@@ -19,22 +19,22 @@ public class KeyListener
         return  KeyListener.instance;
     }
 
-    public static void keyCallback(long window, int key, int scancode, int action, int mods)
+    public static void key_callback(long window, int key, int scancode, int action, int mods)
     {
         if (action == GLFW_PRESS)
         {
-            get().keyPressed[key] = true;
+            get().key_pressed[key] = true;
         }
         else if (action == GLFW_RELEASE)
         {
-            get().keyPressed[key] = false;
+            get().key_pressed[key] = false;
         }
     }
 
-    public static boolean isKeyPressed(int keyCode)
+    public static boolean is_key_pressed(int key_code)
     {
-        if (keyCode < get().keyPressed.length)
-            return get().keyPressed[keyCode];
+        if (key_code < get().key_pressed.length)
+            return get().key_pressed[key_code];
         else
             return false;
     }

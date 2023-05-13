@@ -14,16 +14,16 @@ public class Window {
     private long glfwWindow;
     private final String title;
     private static Window window = null;
-    private static Scene currentScene;
+    public static Scene currentScene;
     public float r,g,b;
 
     private Window() {
         this.width = 1920;
         this.height = 1080;
         this.title ="Mario";
-        r = 1.0f;
-        g = 1.0f;
-        b = 1.0f;
+        r = 0.0f;
+        g = 0.0f;
+        b = 0.0f;
     }
     public static void changeScene(int newScene) {
         switch (newScene) {
@@ -50,6 +50,11 @@ public class Window {
         }
 
         return Window.window;
+    }
+
+    public static Scene get_scene()
+    {
+        return get().currentScene;
     }
 
     public void run() {
@@ -85,10 +90,10 @@ public class Window {
             throw new IllegalStateException("Failed to create the GLFW window");
         }
 
-        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
-        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
-        glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
-        glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mouse_pos_callback);
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouse_button_callback);
+        glfwSetScrollCallback(glfwWindow, MouseListener::mouse_scroll_callback);
+        glfwSetKeyCallback(glfwWindow, KeyListener::key_callback);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
@@ -119,7 +124,7 @@ public class Window {
             if (dt >= 0)
                 currentScene.update(dt);
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE))
+            if (KeyListener.is_key_pressed(GLFW_KEY_ESCAPE))
                 glfwSetWindowShouldClose(glfwWindow, true);
 
             glfwSwapBuffers(glfwWindow);
