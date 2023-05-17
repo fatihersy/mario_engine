@@ -1,17 +1,17 @@
 package util;
 
+import org.example.components.Spritesheet;
 import org.example.renderer.Shader;
 import org.example.renderer.Texture;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AssetPool {
     private final static String shader_path = "assets/shaders/";
     private final static String texture_path = "assets/images/";
-    private static Map<String, Shader> shader_map = new HashMap<>();
-    private static Map<String, Texture> texture_map = new HashMap<>();
+    private static final Map<String, Shader> shader_map = new HashMap<>();
+    private static final Map<String, Texture> texture_map = new HashMap<>();
+    private static final Map<String, Spritesheet> spritesheet_map = new HashMap<>();
 
     public static Shader get_shader(String resource_name)
     {
@@ -39,5 +39,18 @@ public class AssetPool {
         }
 
         return AssetPool.texture_map.get(resource_name);
+    }
+
+    public static void add_spritesheet(String resource_name, Spritesheet spritesheet)
+    {
+        if (!AssetPool.spritesheet_map.containsKey(resource_name))
+            AssetPool.spritesheet_map.put(resource_name, spritesheet);
+    }
+    public static Spritesheet get_spritesheet(String resource_name)
+    {
+        if (AssetPool.spritesheet_map.containsKey(resource_name))
+            return AssetPool.spritesheet_map.get(resource_name);
+
+        return null;
     }
 }

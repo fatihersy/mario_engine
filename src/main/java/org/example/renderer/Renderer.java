@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Renderer {
-    private final int MAX_BATCH_SIZE = 1000;
-    private List<RenderBatch> batchList;
+    private final List<RenderBatch> batchList;
 
     public Renderer() {
         this.batchList = new ArrayList<>();
@@ -27,10 +26,13 @@ public class Renderer {
     public void add(SpriteRenderer spriteRenderer)
     {
         boolean added = false;
+        Texture texture = spriteRenderer.get_texture();
 
         for (RenderBatch rb: batchList)
         {
-            if (rb.has_room()) {
+            if (!rb.has_sprite_room()) continue;
+            if (texture == null || (rb.has_texture_room() || rb.has_texture(texture)))
+            {
                 rb.add_sprite(spriteRenderer);
                 added = true;
                 break;
@@ -39,6 +41,7 @@ public class Renderer {
 
         if(!added)
         {
+            int MAX_BATCH_SIZE = 1000;
             RenderBatch new_batch = new RenderBatch(MAX_BATCH_SIZE);
             new_batch.start();
             batchList.add(new_batch);

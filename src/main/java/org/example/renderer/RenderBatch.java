@@ -16,32 +16,19 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class RenderBatch
 {
-    // Vertex
-    // ----------------
-    // Pos              Color                           TexCoords       TexID
-    // float, float,    float, float, float, float      float, float    float
-    private final int POS_SIZE = 2;
-    private final int COLOR_SIZE = 4;
-    private final int TEX_COORDS_SIZE = 2;
-    private final int TEX_ID_SIZE = 1;
 
-    private final int POS_OFFSET = 0;
-    private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
-    private final int TEX_COORDS_OFFSET = COLOR_OFFSET + COLOR_SIZE * Float.BYTES;
-    private final int TEX_ID_OFFSET = TEX_COORDS_OFFSET + TEX_COORDS_SIZE * Float.BYTES;
     private final int VERTEX_SIZE = 9;
-    private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
-    private SpriteRenderer[] sprites;
+    private final SpriteRenderer[] sprites;
     private int num_sprites;
-    private boolean has_room;
-    private float[] vertices;
-    private int[] tex_slots = { 0, 1, 2, 3, 4, 5, 6, 7 };
+    private boolean has_sprite_room;
+    private final float[] vertices;
+    private final int[] texture_slots = { 0, 1, 2, 3, 4, 5, 6, 7 };
 
-    private List<Texture> texture_list;
+    private final List<Texture> texture_list;
     private int vaoID, vboID;
-    private int max_batch_size;
-    private Shader shader;
+    private final int max_batch_size;
+    private final Shader shader;
 
     public RenderBatch(int max_batch_size)
     {
@@ -53,7 +40,7 @@ public class RenderBatch
         vertices = new float[max_batch_size * 4 * VERTEX_SIZE];
 
         this.num_sprites = 0;
-        this.has_room = true;
+        this.has_sprite_room = true;
         this.texture_list = new ArrayList<>();
     }
 
@@ -70,15 +57,28 @@ public class RenderBatch
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
+        int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
+        int POS_OFFSET = 0;
+        // Vertex
+        // ----------------
+        // Pos              Color                           TexCoords       TexID
+        // float, float,    float, float, float, float      float, float    float
+        int POS_SIZE = 2;
         glVertexAttribPointer(0, POS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, POS_OFFSET);
         glEnableVertexAttribArray(0);
 
+        int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
+        int COLOR_SIZE = 4;
         glVertexAttribPointer(1, COLOR_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, COLOR_OFFSET);
         glEnableVertexAttribArray(1);
 
+        int TEX_COORDS_OFFSET = COLOR_OFFSET + COLOR_SIZE * Float.BYTES;
+        int TEX_COORDS_SIZE = 2;
         glVertexAttribPointer(2, TEX_COORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEX_COORDS_OFFSET);
         glEnableVertexAttribArray(2);
 
+        int TEX_ID_OFFSET = TEX_COORDS_OFFSET + TEX_COORDS_SIZE * Float.BYTES;
+        int TEX_ID_SIZE = 1;
         glVertexAttribPointer(3, TEX_ID_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEX_ID_OFFSET);
         glEnableVertexAttribArray(3);
     }
@@ -101,7 +101,7 @@ public class RenderBatch
 
         if (num_sprites >= this.max_batch_size)
         {
-            this.has_room = false;
+            this.has_sprite_room = false;
         }
     }
 
@@ -117,7 +117,7 @@ public class RenderBatch
             glActiveTexture(GL_TEXTURE0 + i + 1);
             texture_list.get(i).bind();
         }
-        shader.upload_integer_array("uTextures", tex_slots);
+        shader.upload_integer_array("uTextures", texture_slots);
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
@@ -129,9 +129,9 @@ public class RenderBatch
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
 
-        for (int i=0; i < texture_list.size(); i++)
+        for (Texture texture : texture_list)
         {
-            texture_list.get(i).unbind();
+            texture.unbind();
         }
 
         shader.detach();
@@ -209,16 +209,22 @@ public class RenderBatch
         // TRIANGLE 1
         elements[offset_array_index] = offset + 3;
         elements[offset_array_index + 1] = offset + 2;
-        elements[offset_array_index + 2] = offset + 0;
+        elements[offset_array_index + 2] = offset;
 
         // TRIANGLE 2
-        elements[offset_array_index + 3] = offset + 0;
+        elements[offset_array_index + 3] = offset;
         elements[offset_array_index + 4] = offset + 2;
         elements[offset_array_index + 5] = offset + 1;
     }
 
-    public boolean has_room(){
-        return this.has_room;
+    public boolean has_sprite_room(){
+        return this.has_sprite_room;
+    }
+    public boolean has_texture_room(){
+        return this.texture_list.size() < texture_slots.length;
+    }
+    public boolean has_texture(Texture texture){
+        return this.texture_list.contains(texture);
     }
 }
 

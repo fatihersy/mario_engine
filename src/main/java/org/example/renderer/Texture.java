@@ -11,17 +11,17 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture
 {
     private final int handle;
+    private int width, height;
 
     public Texture(String filepath)
     {
-
         handle = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, handle);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
         IntBuffer width = BufferUtils.createIntBuffer(1);
@@ -33,6 +33,9 @@ public class Texture
 
         if (image != null )
         {
+            this.width = width.get(0);
+            this.height = height.get(0);
+
             if(channels.get(0) == 4){
                 glTexImage2D(
                         GL_TEXTURE_2D, 0, GL_RGBA,
@@ -66,4 +69,7 @@ public class Texture
         glBindTexture(GL_TEXTURE_2D,0);
     }
 
+    public int get_width(){ return this.width; }
+
+    public int get_height(){ return this.height; }
 }

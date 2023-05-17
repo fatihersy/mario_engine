@@ -1,7 +1,7 @@
 package org.example.jade;
 import org.example.components.SpriteRenderer;
+import org.example.components.Spritesheet;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 import util.AssetPool;
 
 
@@ -16,34 +16,32 @@ public class LevelEditorScene extends Scene
     @Override
     public void init()
     {
+        load_resources();
+
         this.camera = new Camera(new Vector2f());
 
-        int xOffset = 10;
-        int yOffset = 10;
+        Spritesheet spritesheet = AssetPool.get_spritesheet("spritesheet");
+        assert spritesheet != null : "'spritesheet.png' return null";
 
-        float total_width = (float) (600 - xOffset * 2);
-        float total_height = (float) (300 - yOffset * 2);
+        GameObject obj1 = new GameObject("Object 1", new Transform(new Vector2f(100, 100), new Vector2f(256, 256)));
 
-        float sizeX = total_width / 100.0f;
-        float sizeY = total_height / 100.0f;
+        obj1.add_component(new SpriteRenderer(spritesheet.get_sprite(0)));
+        this.add_game_object(obj1);
 
-        for(int x=0; x < 100; x++)
-        {
-            for (int y=0; y < 100; y++)
-            {
-                float xPos = xOffset + (x * sizeX);
-                float yPos = yOffset + (y * sizeY);
+        GameObject obj2 = new GameObject("Object 2", new Transform(new Vector2f(400, 100), new Vector2f(256, 256)));
+        obj2.add_component(new SpriteRenderer(spritesheet.get_sprite(15)));
+        this.add_game_object(obj2);
 
-                GameObject obj = new GameObject("obj" + x + "" + y, new Transform(new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
-                obj.add_component(new SpriteRenderer(new Vector4f( xPos / total_width, yPos / total_height, 1, 1)));
-                this.add_game_object(obj);
-            }
-        }
     }
 
     private void load_resources()
     {
         AssetPool.get_shader("default");
+
+        AssetPool.add_spritesheet(
+                "spritesheet",
+                new Spritesheet(AssetPool.get_texture("spritesheet.png"), 16, 16, 26, 0)
+        );
     }
 
     @Override
